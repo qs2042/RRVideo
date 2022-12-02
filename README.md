@@ -1,7 +1,6 @@
 # RRVideo
 视频网站
 
-
 # 微服务模块
 ```
 group           com.qing.rrvideo
@@ -20,4 +19,3 @@ package         com.qing.rrvideo-[moduleName]
 会员服务         com.qing.rrvideo.member
 优惠券服务       com.qing.rrvideo.coupon
 ```
-

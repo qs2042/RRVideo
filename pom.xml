@@ -17,6 +17,7 @@
         <module>rrvideo-order</module>
         <module>rrvideo-member</module>
         <module>rrvideo-coupon</module>
+        <module>renren-fast</module>
     </modules>
 
 </project>
