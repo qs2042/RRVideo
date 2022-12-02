@@ -10,6 +10,7 @@
     <description>聚合服务</description>
     <packaging>pom</packaging>
 
+    <!-- 聚合服务 -->
     <modules>
         <module>rrvideo-product</module>
         <module>rrvideo-ware</module>
