@@ -18,4 +18,5 @@ package         com.qing.rrvideo-[moduleName]
 订单服务         com.qing.rrvideo.order
 会员服务         com.qing.rrvideo.member
 优惠券服务       com.qing.rrvideo.coupon
+
 ```
