@@ -18,6 +18,8 @@
         <module>rrvideo-member</module>
         <module>rrvideo-coupon</module>
         <module>renren-fast</module>
+        <module>renren-generator</module>
+        <module>rrvideo-common</module>
     </modules>
 
 </project>

@@ -520,11 +520,133 @@ linux> 输入:wq, 写入并退出
 
 ```
 
-# 部署renren-fast-vue && renren-fast
+# 部署后台管理(后端和前端)
 ```
-
 git> git clone https://github.com/renrenio/renren-fast-vue.git
 git> git clone https://gitee.com/renrenio/renren-fast
+Tips: 拷贝下来后, 将文件里的.git文件都删除掉
+
+
+
+后端: renren-fast
+将renren-fast文件放入rrvideo项目中
+↓
+接着在聚合pom文件中加入
+<modules>
+    ...
+    <module>renren-fast</module>
+</modules>
+↓
+Alt+Ctrl+Shift看一下modules里的renren-fast是不是指定java1.8版本的
+↓
+配置据库
+mysql> create database rrvideo_admin;
+mysql> user rrvideo_admin;
+将renren-fast/db/mysql.sql中的sql全部都执行起来
+↓
+修改数据源
+renren-fast/src/main/resources/application.yml
+可以看到profiles环境是dev, 那么转到application-dev.yml
+把数据源修改为自己的
+
+
+
+
+前端: renren-fast-vue
+部署nodeJS && 淘宝镜像源
+安装nodeJS
+cmd> npm -v # 查看是否安装成功
+cmd> npm config set registry http://registry.npm.taobao.org
+↓
+vscode打开项目 -> 新建终端 -> npm install -> npm run dev
+报错的话就更换镜像源: 
+    0.搜索powershell, 使用命令查看权限: get-ExecutionPolicy
+        默认是Restricted, 将它改为RemoteSigned
+        set-ExecutionPolicy RemoteSigned
+    2.npm rebuild node-sass
+    1.npm install chromedriver --chromedriver_cdnurl=http://cdn.npm.taobao.org/dist/chromedriver
+
+```
+
+# 部署代码生成器
+```
+# 拉取项目代码
+git> git clone https://gitee.com/renrenio/renren-generator.git
+Tips: 删除.git文件
+
+# 项目添加进rrvideo
+[RRVideo/pom.xml]
+<modules>
+    ...
+    <module>renren-fast</module>
+</modules>
+
+# 指定项目Java版本
+Alt+Ctrl+Shift看一下modules里的renren-fast是不是指定java1.8版本的
+
+# 修改数据源
+进到application.yml里
+将数据源改为jdbc:mysql://192.168.126.128:3306/rrvideo_pms
+账号密码: root
+
+# 修改自动生成的配置
+进到generator.proerties里
+mainPath=com.qing
+package=com.qing.rrvideo
+moduleName=product
+
+author=halfRain
+email=2042136767@qq.com
+tablePrefix=pms_
+
+# 运行自动生成代码网站
+接着运行RenrenApplication.java
+打开http://localhost, 就可以访问代码生成器页面
+选择全部表, 按下生成代码, 会把zip文件下载到本地
+
+# 将自动生成的代码进行移植
+将zip的文件解压并复制粘贴到rrvideo-product项目里
+此时项目会爆红依赖, 有mybatis-plus这种需要添加依赖的
+和PageUtils.java, Query.java这种需要路径导入的
+前者添加pom.xml依赖
+后者可在renren-fast项目中找到
+(renren-fast/src/main/java/io/renren/common/utils)
+
+# 生成一个微服务通用的依赖
+New -> Module -> Maven
+↓
+[rrvideo-common/pom.xml]
+↓
+<description>每一个微服务公共的依赖, bean, 工具类等</description>
+
+# 在微服务product中添加通用依赖
+[rrvideo-product/pom.xml]
+<dependency>
+    <groupId>com.qing.rrvideo</groupId>
+    <artifactId>rrvideo-common</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+</dependency>
+
+# 添加依赖
+[rrvideo-common/pom.xml]
+<!-- mybatis-plus -->
+<!-- lombok -->
+<!-- httpcomponent -->
+<!-- commons-lang -->
+...
+
+
+# 移植common文件(先不用这种省事的方法)
+将renren-fast/src/main/java/io/renren/的common文件
+移植到rrvideo-common/src/main/java/com/qing/common
+
+# 移植common文件
+查看rrvideo-product/src/main/java/com.qing.rrvideo.product文件夹中的
+controller, dao, entity, service
+这些文件里的.java文件, 看看缺少什么依赖, 就进行补充
+如果是缺少mybatis这类依赖, 那么就在[rrvideo-common/pom.xml]中进行导入
+如果是缺少renren自己写的包, 那么就到renren-fast项目中去找, 然后将包复制粘贴到rrvideo-common项目中
+
 
 ```
 
