@@ -1,6 +1,33 @@
+# 介绍
+![222](https://ts3.cn.mm.bing.net/th?id=OIP-C.4_7YxC57UAtb2tGow755XgHaFj&w=288&h=216&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2)
 
-# 电商模式
-```
+> 努力不一定成功, 不努力也不一定成功  
+> 及时享乐, 和我一起摆烂罢  
+> -- halfRain
+
+| key | value
+|:---:|:---:|
+| author        | halfRain
+| encoding      | utf-8
+| createTime    | 2022年12月4日18:34:58
+| java          | 1.8.0_311
+| Maven         | Apache Maven 3.6.3
+| Git           | 2.35.1.windows.2
+| linux         | centOS 8 AMD 64
+| docker(client)| 20.10.21(Engine-Community)
+| docker(server)| 20.10.21(Engine-Community)
+| mysql         | 8.0.31 (MySQL Community Server - GPL)
+| redis         | 7.0.5
+| NULL          | NULL
+| NULL          | NULL
+| NULL          | NULL
+
+
+
+# 知识储备
+
+#### 0.电商模式
+```text
 B2B     Business to Business    商家与商家建立的商业关系, 如阿里巴巴
 B2C     Business to Consumer    供应商直接将商品卖给用户, 商对客模式, 直接面向消费者销售产品和服务
                                 如苏宁易购, 京东, 天猫, 小米商城, PDD(即商业零售)
@@ -10,54 +37,86 @@ O2O     Online To Offline       将线下商务与互联网结合在一起, 让�
                                 线上快速支付, 线下优质服务, 如饿了么, 美团, 京东到家
 ```
 
-# 微服务 && 集群,分布式节点
-```
-[微服务]
+#### 1.微服务
+```text
 微服务架构的风格, 就像是把一个单独的应用程序开发为一套小服务
-每个小服务运行在自己的进程中, 并使用轻量级机制通信(通常是HTTP API)
+每个小服务只运行在自己的进程中, 并使用轻量级机制互相通信(通常是HTTP API)
+
 这些服务围绕业务能力来构建, 并通过完全自动化部署机制来独立部署
 这些服务使用不同的编程语言书写, 以及不同数据储存技术, 并保持最低限度的集中式管理
-人话: 拒绝大型单体应用, 基于业务边界进行服务微化拆分, 各个服务独立部署运行
 
-[集群&分布式&节点]
-集群是个物理形态, 分布式是个工作方式
-只要是一堆机器, 就可以叫集群, 他们是不是一起协作着干活, 这个谁也不知道
-其他人定义:
-    <分布式系统原理与规范>
-    "分布式系统是若干独立计算机的集合, 这些计算机对于用户来说就像单个相关系统"
-    分布式系统(Distributed System)是建立在网络之上的软件系统
-分布式是指将不同业务分布在不同的地方
-集群指的是将几台服务器集中在一起, 实现同一业务
-例子: 京东就是一个分布式系统, 众多业务运行在不同的机器上, 所有业务构成一个大型的业务集群
-      而每一个小的业务(例如用户系统), 当访问压力大的时候, 一台服务器是不够的
-      这时应该将用户系统部署到多个服务器上, 也就是每一个业务系统也可以做集群化
+用人话来说就是: 
+拒绝大型的单体应用, 基于业务边界进行服务微化拆分, 各个服务独立部署运行
+```
+
+#### 2.集群 && 分布式 && 节点
+```text
+集群是物理形态的
+    指的是将几台服务器集中在一起, 实现同一业务
+    只要是一堆机器, 就可以叫集群
+    (至于他们是不是一起协作着干活, 这个谁也不知道()
+
+分布式是一种工作方式
+    指的是将不同业务分布在不同的地方
+
+节点
+    集群中的一个服务器
+
+
+例如京东就是一个分布式系统, 它众多的业务运行在不同机器上
+所有业务构成了一个大型的业务集群
+    机器1: 用户服务
+    机器2: 商品服务
+而每一个小的业务(例如用户系统), 当访问压力过大的时候, 一台服务器是不够的
+这时应该将业务部署到多个服务器上(也就是每一个业务系统都可以做集群化)
 分布式中的每一个节点, 都可以做集群, 而集群不一定就是分布式的
-节点: 集群中的一个服务器
 ```
+> <分布式系统原理与规范>  
+> "分布式系统是若干独立计算机的集合, 这些计算机对于用户来说就像单个相关系统"  
+> 分布式系统(Distributed System)是建立在网络之上的软件系统  
 
-# 远程调用 && 负载均衡 && 服务注册/发现, 注册/配置中心
-```
-[远程调用]
-在分布式系统中, 各个服务可能处于不同主机, 但是服务之间不可避免的需要互相调用
+#### 3.远程调用
+```text
+
+在分布式系统中, 各个服务可能处于不同主机
+但是服务之间不可避免的需要互相调用
 而这就被称为远程调用
-远程调用的方式有好几种, 这里就不多阐述
-SpringCloud中使用HTTP+JSON的方式完成远程调用
 
-[负载均衡]
-分布式系统中, A服务需要调用B服务, B服务在多台机器中都存在, A调用任意一个服务器均可完成功能
-为了使每一个服务器都不要太忙或者太闲, 我们需要负载均衡的调用每一个服务器, 以此提升网站的健壮性
-场景的负载均衡算法:
-    1.轮询, 为第一个请求选择健康池中的第一个后端服务器, 然后按照顺序往后依次选择, 直到最后一个, 然后循环
-    2.最小连接, 优先选择连接数最少, 也就是压力最小的后端服务器, 在会话较长的情况下可以考虑采取这种方式
-    3.散列, 根据请求源的IP的散列(hash), 来选择要转发的服务器
-        这种方式可以一定程度上保证特定用户能连接到相同的服务器
-        如果应用需要处理状态要求用户连接到和之前相同的服务器, 那么就可以用这种
+远程调用的方式有好几种, 这里就不过多阐述
+
+在SpringCloud中通常使用HTTP+JSON的方式完成远程调用
+
+```
+
+#### 4.负载均衡
+```text
+
+在分布式系统中, A服务需要调用B服务, 而B服务在多台机器中都存在
+A调用任意一个服务器均可完成功能
+为了使每一个服务器都不要太忙或者太闲
+我们需要负载均衡的调用每一个服务器, 以此提升网站的健壮性
+
+
+场景的负载均衡算法
+=======================================
+name       introduce
+=======================================
+轮询         为第一个请求选择健康池中的第一个后端服务器
+            然后按照顺序往后依次选择, 直到最后一个, 然后循环
+最小连接      优先选择连接数最少, 也就是压力最小的后端服务器
+            在会话较长的情况下可以考虑采取这种方式
+散列         根据请求源的IP的散列(hash), 来选择要转发的服务器
+            这种方式可以一定程度上保证特定用户能连接到相同的服务器
+            如果应用需要处理状态要求用户连接到和之前相同的服务器, 那么就可以用这种
+
 假设A服务有一个, B服务有三个
 轮询方式: 第一次B1, 第二次B2, 第三次B3, 第四次B1
 最小连接: B1, B2, B3哪个连接数最少就选择哪个
-散列方式: ...
+散列方式: 广东IP选择B1, 广西IP选择B2, 湖北IP选择B3
+```
 
-[服务注册/发现 & 注册中心]
+#### 5.服务注册 && 服务发现 && 注册中心
+```text
 A服务需要调用B服务, 但是A服务并不知道B服务当前在哪几台服务器有
 也不知道那些服务是正常的, 那些那些服务已经下线
 解决这个问题的方法之一: 引入注册中心
@@ -71,6 +130,10 @@ C1服务, C2服务, C3服务
 服务注册: B服务上线后, 告知注册中心我上线了
 服务发现: A服务想调用B服务, 去注册中心询问B服务在那台机器
 
+```
+
+#### 6.配置中心
+```text
 
 [配置中心]
 每一个服务最终都有大量的配置, 并且每个服务都可能部署在多台机器上
@@ -79,65 +142,115 @@ C1服务, C2服务, C3服务
 配置中心用来集中管理微服务的配置信息
 
 
-[服务熔断 & 服务降级]
-在微服务架构中, 微服务之间通过网络进行通信, 存在互相依赖, 当其中一个服务不可用时
-就有可能会造成雪崩效应, 要防止这样子的情况出现, 必须要有容错机制来保护服务
+```
 
-A服务(订单) -> B服务(库存) -> C服务(支付)
-假设B服务出现宕机, A服务就得等待B服务
-假设C服务出现宕机, A服务和B服务就得等待C服务
-假设BC服务都宕机了, A服务就得等待BC服务好
-
-重点是宕机的过程中, 假设有更多的请求发过来, 那么多条请求就会堆积在一起, 造成请求积压
-
-服务熔断    设置服务的超时时间, 当被调用的服务经常失败到达某个阈值, 就可以开启断路保护机制
-            后来的请求不再去调用这个服务, 本地直接返回默认的数据
-服务降级    在运维期间, 当系统处于高峰期, 系统资源紧缺, 我们可以让非核心业务降级运行
-            这里的降级指: 某些服务不处理, 或简单处理(抛异常, 返回NULL, 调用Mock数据, 调用Fallback处理逻辑)
-
-
-[API网关]
-在微服务架构中, API Gateway作为整体架构的重要组件
+#### 7.网关(负载均衡, 服务自动熔断, 灰度发布, 统一认证, 限流监控, 日志统计)
+```
+API网关(API Gateway)在微服务的整体架构中, 是很重要组件
 它抽象了微服务都需要的公共功能
-同时提供了客户端: 负载均衡, 服务自动熔断, 灰度发布, 统一认证, 限流监控, 日志统计, 等丰富功能
+同时提供了客户端以下功能: 
+    负载均衡, 服务自动熔断, 灰度发布, 
+    统一认证, 限流监控, 日志统计, 等丰富功能
 
 client
 ↓
-API Gateway(serviceId: login-repo)
+serviceId: login-repo
 ↓
-Service Discovery
+API网关(API Gateway)
+↓
+统一认证, 限流监控, 日志统计, 灰度发布
+↓
+服务发现(Service Discovery)
 ↓
 login-repo-A(192.168.1.4:8080)
 login-repo-B(192.168.1.4:8081)
 login-repo-C(192.168.1.4:8082)
+↓
+负载均衡, 服务自动熔断
+↓
+返回数据
 
-请求
-↓
-网关(负载均衡, 服务自动熔断, 灰度发布, 统一认证, 限流监控, 日志统计, 等丰富功能)
-↓
+
+在微服务架构中, 微服务之间通过网络进行通信, 这存在互相依赖
+如果当其中一个服务不可用时, 就有可能会造成雪崩效应
+为了防止这样子的情况出现, 必须要有容错机制来保护服务
+
+A服务(订单) -> B服务(库存) -> C服务(支付)
+假设
+    B服务出现宕机, A服务就得等待B服务
+    C服务出现宕机, A服务和B服务就得等待C服务
+    BC服务都宕机了, A服务就得等待BC服务
+重点不在于宕机, 而在于宕机的过程中
+宕机的过程中, 用户在等待返回的数据, 服务器在等待服务恢复, 这就导致资源被占用
+如果此时有更多的请求发过来, 那么多条请求就会堆积在一起, 造成请求积压
+
+以下俩种方法可以解决这类问题
+服务熔断
+    设置服务的超时时间, 当被调用的服务经常失败到达某个阈值
+    就可以开启断路保护机制, 后来的请求不再去调用这个服务
+    本地直接返回默认的数据
+服务降级    
+    运维期间, 当系统处于高峰期, 系统资源紧缺, 我们可以让非核心业务降级运行
+    这里的降级指: 某些服务不处理, 或简单处理
+    (抛异常, 返回NULL, 调用Mock数据, 调用Fallback处理逻辑)
+
+
 ...
 
 
 
 ```
 
-# 流程图
+
+
+# 项目流程
+#### 0.流程图
 ```
-Android, Windows
+client
 ↓
-防火墙, WAF, CDN
+API网关
 ↓
-Nginx集群
-↓
-Webflux网关
-SpringClound Gateway
-SpringClound Gateway
-SpringClound Gateway
-1.动态路由 -> 指定服务, 根据状态进行负载均衡(ribbon|loadBlance) 或 熔断降级(sentinel)
-2.认证授权 -> 判断是否合法
-3.令牌限流 -> 限制流量
-4.认证中心 -> OAuth2.0
-↓
+-> 服务治理 -> 业务微服务集群
+-> 第三方服务
+
+
+[client]
+admin-vue, shop-vue, app, 小程序
+
+[API网关]
+令牌限流, 鉴权, 熔断降级, 过滤, 动态路由, 负载均衡, 认证中心, 认证授权
+防火墙, WAF, CDN, Nginx集群
+
+[业务微服务集群]
+商品服务, 支付服务, 优惠服务, 用户服务, 仓储服务, 秒杀服务, 订单服务, 检索服务, 中央认证服务, 购物车服务, 后台管理
+
+[第三方服务]
+物流, 短信, 金融, 身份认证
+
+[数据层]
+redis, shardingSphere(mysql), rabbitMQ, elastic, OOS
+
+[服务治理]
+SpringCloudAlibaba
+    Nacos注册中心/配置中心
+    Seata分布式事务
+    Sentinel服务容错
+
+SpringCloud
+    Feign远程调用/负载均衡
+    Gateway网关
+    sleuth服务追踪
+    Zipkin可视化追踪
+
+[应用监控]
+Prometheus
+Grafana
+
+
+
+
+
+网关    -> Webflux网关(SpringClound Gateway)
 业务集群 -> openfeign或feign
 数据库   -> mysql(masterSlave)
 缓存     -> redis(sentinel+shard)
@@ -148,35 +261,7 @@ SpringClound Gateway
 注册中心 -> nacos
 配置中心 -> nacos
 服务追踪 -> sleuth, zipkin, metncs -> prometheus -> grafana, altermanager
-```
 
-# 流程图2
-```
-admin-vue, shop-vue, app, 小程序
-↓
-API网关(限流, 鉴权, 熔断降级, 过滤, 路由, 负载均衡)
-↓
-业务微服务集群(商品服务, 支付服务, 优惠服务, 用户服务, 仓储服务, 秒杀服务, 订单服务, 检索服务, 中央认证服务, 购物车服务, 后台管理)
-第三方服务(物流, 短信, 金融, 身份认证)
-
-[数据]
-redis, shardingSphere(mysql), rabbitMQ, elastic, OOS
-
-[服务治理]
-Nacos注册中心/配置中心
-Seata分布式事务
-Sentinel服务容错
-SpringCloudAlibaba
-
-Feign远程调用/负载均衡
-Gateway网关
-sleuth服务追踪
-Zipkin可视化追踪
-SpringCloud
-
-[应用监控]
-Prometheus
-Grafana
 
 
 
@@ -185,33 +270,50 @@ Grafana
 
 
 
+# 项目环境
 
+#### 0.Linux
+[下载]()
+```text
+因为贫穷, 故采用虚拟机配置Linux的方式
+使用虚拟机前要在BIOS里开启CPU虚拟化
 
-
-
-# 虚拟机(VMware, VirtualBox) && 搭建Linux
-```
-VMware          ...
+虚拟机类型
+VMware          https://www.vmware.com/
 VirtualBox      https://www.virtualbox.org/
-Tips: 要开启CPU虚拟化
 
-
-Vagrant https://app.vargantup.com/boxes/search
-Tips: 结合VirtualBox可以快速创建一个linux虚拟机
-打开Windows CMD, 运行Vagrant init centos/7, 即可初始化一个centos7系统
-运行vagrant up即可启动虚拟机, 默认的账号和密码是root + vagrant
+[VirtualBox]
+VirtualBox和Vagrant配合可以快速创建一个linux虚拟机
+Vagrant官网地址: https://app.vargantup.com/boxes/search
 vagrant常用命令: https://www.vagrantup.com/docs/cli/init.html
-    vagrant shh     自动使用vagrant用户连接虚拟机
-    vagrant upload source [destination] [name|id] 上传文件
-默认虚拟机的ip地址不是固定的ip
-修改vagrantfile中的config.vm.network "private_network", ip: "192.168.56.10"
+
+# 初始化一个centos7系统
+cmd> Vagrant init centos/7
+cmd> vagrant up      启动虚拟机(默认的账号和密码是root + vagrant)
+cmd> vagrant shh     自动使用vagrant用户连接虚拟机
+cmd> vagrant upload source [destination] [name|id] 上传文件
+Tips: 默认虚拟机的ip地址不是固定的ip
+      需要修改vagrantfile中的config.vm.network "private_network", ip: "192.168.56.10"
+
+
+[VMware]
+因为我用不了VirtualBox, 那就选择VMWare
+0.下载CentOS-8.iso镜像文件
+1.创建虚拟机(2C2T, 4GB内存, 20GB硬盘, 网络NAT模式)
+2.启动虚拟机
+3.查看虚拟机IP(极为重要)
+    linux> ifconfig
+    ens33的inet后面就是ip地址
+    在主机上面ping一下
+    cmd> ping 虚拟机ip地址
+    能ping成功就好, 不行的话就GG
+    
+
+
 ```
 
-# VirtualBox: 网络地址转换-端口转发
-```
-windows: mysql=3333, redis=6666, 本体=2222
-↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-virtualbox: mysql=3306, redis=6379, 本体=22
+```text
+Linux的端口转发(网络地址转换)
 
 使用VirtualBox, 正常是访问不到虚拟机里的端口的, 需要做一个端口转发
 比如在外界, 访问我的电脑端口3333, 那么就转发给虚拟机里的端口3306
@@ -231,38 +333,44 @@ linux> ping 本机ip
 
 ```
 
+#### 1.Java
+[主页]()
+[下载]()
+[历史下载]()
+```text
 
-
-
-
-
-
-# Maven
 ```
-# 下载
-主页        https://maven.apache.org/index.html
-下载        https://maven.apache.org/download.cgi
-历史下载    https://dlcdn.apache.org/maven/
 
+#### 2.Maven
+[主页](https://maven.apache.org/index.html)
+[下载](https://maven.apache.org/download.cgi)
+[历史下载](https://dlcdn.apache.org/maven)
+```text
 # 安装 && 环境变量
-解压文件后, 设置环境变量
+下载文件后, 将文件解压到本地目录里
 我这里解压安装到F:\program\apache-maven-3.8.6
 于是我添加了环境变量F:\program\apache-maven-3.8.6\bin
 
-# 查看是否配置成功
+# 查看环境变量是否配置成功
 cmd> mvn -version
+```
 
-# 更改镜像源
-[F:\program\apache-maven-3.6.3\conf]
+```xml
+<!-- 
+更改镜像源: [apache-maven-3.6.3\conf]
+-->
 <mirror>
     <id>nexus-aliyun</id>
     <mirrorOf>central</mirrorOf>
     <name>Nexus aliyun.</name>
     <url>http://maven.aliyun.com/nexus/content/groups/public</url>
 </mirror>
+```
 
-# 配置jdk1.8编译项目
-[F:\program\apache-maven-3.6.3\conf]
+```xml
+<!-- 
+配置jdk1.8编译项目: apache-maven-3.6.3\conf
+-->
 <profile>
     <id>jdk-1.8</id>
     <activation>
@@ -276,7 +384,9 @@ cmd> mvn -version
         <maven.compliance.compilerVersion>1.8</maven.compliance.compilerVersion>
     </properties>
 </profile>
+```
 
+```
 # 配置IDEA
 Settings -> Build, Execution, Deployment -> Build Tools -> Maven
 
@@ -285,20 +395,19 @@ name        F:\program\apache-maven-3.6.3
 settgins    F:\program\apache-maven-3.6.3\conf\settings.xml
 repository  F:\program\apache-maven-3.6.3\repository
 
-
 Tips: 之前的项目一直都是用的IDEA提供的MAVEN(3.6.3)
     name: Bundled (Maven 3)
     settgins: C:\Users\Administrator\.m2\settings.xml
     repository: C:\Users\Administrator\.m2\repository
-
+    所以我这边也选用3.6.3的版本, 适合平滑过渡
 
 ```
 
-# Git
+#### 3.Git
 ```
-https://git-scm.com
+官网地址: https://git-scm.com
 
-右键进入git bash
+下载并安装完后, 在本地文件夹中, 鼠标右键进入git bash
 
 # 配置用户名
 gitBash> git config --global user.name "halfRain"
@@ -306,17 +415,15 @@ gitBash> git config --global user.name "halfRain"
 # 配置邮箱
 gitBash> git config -- global user.email "2042136767@qq.com"
 
-# 配置ssh免密连接(生成id_rsa文件)
+# 配置ssh免密连接(生成id_rsa文件, 查看id_rsa文件)
 gitBash> ssh-keygen -t rsa -C "2042136767@qq.com"
-
-# 配置ssh免密连接(查看id_rsa文件)
 gitBash> cat ~/.ssh/id_rsa.pub
 
-# 配置ssh免密连接
+# 配置ssh免密连接()
 https://github.com/settings/keys
 将id_rsq文件里的内容复制到SSH keys里, 这里可以用github, 也可以用gitee
 
-# 测试是否连接成功
+# 配置ssh免密连接(测试是否连接成功)
 gitBash> ssh -T git@github.com
 
 
@@ -329,7 +436,8 @@ https:  https://github.com/qs2042/RRVideo.git
 ssh:    git@github.com:qs2042/RRVideo.git
 ```
 
-# Docker介绍
+#### 4.Docker
+#### Docker介绍
 ```
 文档地址    https://docs.docker.com/install/linux/docker-ce/centos/
 镜像仓库    https://hub.docker.com/
@@ -362,7 +470,7 @@ ssh:    git@github.com:qs2042/RRVideo.git
             192.168.126.1:80   -> nginx
 ```
 
-# Docker命令(初始化 && 安装, 卸载 && 启动, 停止)
+#### Docker命令(初始化 && 安装, 卸载 && 启动, 停止)
 ```
 # 切换到root账户下
 linux> su (或者su root)
@@ -389,7 +497,7 @@ linux> sudo systemctl start docker
 linux> TODO ...
 ```
 
-# Docker命令(Other)
+#### Docker命令(Other)
 ```
 # 设置docker开启自启
 linux> sudo systemctl enable docker
@@ -398,7 +506,7 @@ linux> sudo systemctl enable docker
 linux> docker -v
 ```
 
-# Docker命令(容器)
+#### Docker命令(容器)
 ```
 # 查看docker的镜像
 linux> docker images
@@ -451,7 +559,7 @@ linux> docker update [name] --restart=always
 
 ```
 
-# Docker(Mysql)
+#### Docker(Mysql)
 ```
 linux> docker pull mysql
 
@@ -489,7 +597,7 @@ skip-name-resolve
 
 ```
 
-# Docker(Redis)
+#### Docker(Redis)
 ```
 # 拉取image
 linux> docker pull redis
@@ -520,7 +628,7 @@ linux> 输入:wq, 写入并退出
 
 ```
 
-# 部署后台管理(后端和前端)
+#### 5.renren-fast && renren-fast-vue
 ```
 git> git clone https://github.com/renrenio/renren-fast-vue.git
 git> git clone https://gitee.com/renrenio/renren-fast
@@ -568,7 +676,7 @@ vscode打开项目 -> 新建终端 -> npm install -> npm run dev
 
 ```
 
-# 部署代码生成器
+#### 6.renren-generator
 ```
 # 拉取项目代码
 git> git clone https://gitee.com/renrenio/renren-generator.git
@@ -649,4 +757,8 @@ controller, dao, entity, service
 
 
 ```
+
+
+
+
 
