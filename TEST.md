@@ -1,4 +1,5 @@
 # 介绍
+
 ![222](https://ts3.cn.mm.bing.net/th?id=OIP-C.4_7YxC57UAtb2tGow755XgHaFj&w=288&h=216&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2)
 
 > 努力不一定成功, 不努力也不一定成功  
@@ -10,19 +11,17 @@
 | author        | halfRain
 | encoding      | utf-8
 | createTime    | 2022年12月4日18:34:58
+| IDEA          | 2020.3.4 AMD64
 | java          | 1.8.0_311
 | Maven         | Apache Maven 3.6.3
 | Git           | 2.35.1.windows.2
-| linux         | centOS 8 AMD 64
+| linux         | centOS 8 AMD64
 | docker(client)| 20.10.21(Engine-Community)
 | docker(server)| 20.10.21(Engine-Community)
 | mysql         | 8.0.31 (MySQL Community Server - GPL)
 | redis         | 7.0.5
 | NULL          | NULL
 | NULL          | NULL
-| NULL          | NULL
-
-
 
 # 知识储备
 
@@ -77,7 +76,6 @@ O2O     Online To Offline       将线下商务与互联网结合在一起, 让�
 
 #### 3.远程调用
 ```text
-
 在分布式系统中, 各个服务可能处于不同主机
 但是服务之间不可避免的需要互相调用
 而这就被称为远程调用
@@ -85,7 +83,6 @@ O2O     Online To Offline       将线下商务与互联网结合在一起, 让�
 远程调用的方式有好几种, 这里就不过多阐述
 
 在SpringCloud中通常使用HTTP+JSON的方式完成远程调用
-
 ```
 
 #### 4.负载均衡
@@ -201,9 +198,8 @@ A服务(订单) -> B服务(库存) -> C服务(支付)
 
 ```
 
-
-
 # 项目流程
+
 #### 0.流程图
 ```
 client
@@ -268,9 +264,7 @@ Grafana
 
 ```
 
-
-
-# 项目环境
+# 项目环境(Linux)
 
 #### 0.Linux
 [下载]()
@@ -333,13 +327,15 @@ linux> ping 本机ip
 
 ```
 
-#### 1.Java
+# 项目环境(Java)
 [主页]()
 [下载]()
 [历史下载]()
 ```text
 
 ```
+
+# 项目环境(Maven)
 
 #### 2.Maven
 [主页](https://maven.apache.org/index.html)
@@ -403,6 +399,8 @@ Tips: 之前的项目一直都是用的IDEA提供的MAVEN(3.6.3)
 
 ```
 
+# 项目环境(Git)
+
 #### 3.Git
 ```
 官网地址: https://git-scm.com
@@ -436,8 +434,9 @@ https:  https://github.com/qs2042/RRVideo.git
 ssh:    git@github.com:qs2042/RRVideo.git
 ```
 
+# 项目环境(Docker)
+
 #### 4.Docker
-#### Docker介绍
 ```
 文档地址    https://docs.docker.com/install/linux/docker-ce/centos/
 镜像仓库    https://hub.docker.com/
@@ -628,6 +627,8 @@ linux> 输入:wq, 写入并退出
 
 ```
 
+# 项目环境(后台管理 && 代码生成器)
+
 #### 5.renren-fast && renren-fast-vue
 ```
 git> git clone https://github.com/renrenio/renren-fast-vue.git
@@ -757,6 +758,23 @@ controller, dao, entity, service
 
 
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
