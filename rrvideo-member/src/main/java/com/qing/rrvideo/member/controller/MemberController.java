@@ -3,6 +3,7 @@ package com.qing.rrvideo.member.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.qing.rrvideo.member.feign.CouponFeignService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +31,20 @@ import com.qing.common.utils.R;
 public class MemberController {
     @Autowired
     private MemberService memberService;
+
+
+    // 测试远程调用
+    @Autowired
+    CouponFeignService couponFeignService;
+
+    @RequestMapping("/coupons")
+    public R test() {
+        MemberEntity entity = new MemberEntity();
+        entity.setNickname("小晴");
+        R r = couponFeignService.memberCoupons();
+
+        return R.ok().put("member", entity).put("coupons", r.get("coupons"));
+    }
 
     /**
      * 列表

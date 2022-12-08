@@ -20,8 +20,29 @@
 | docker(server)| 20.10.21(Engine-Community)
 | mysql         | 8.0.31 (MySQL Community Server - GPL)
 | redis         | 7.0.5
-| NULL          | NULL
-| NULL          | NULL
+
+| key | value
+|:---:|:---:|
+| Springboot    | 2.7.6
+| validation    | 2.3.3.RELEASE
+| mybatis       | 3.2.0
+
+| key | value
+|:---:|:---:|   
+| SpringCloud   | 2021.0.5
+| Openfeign     | NULL
+| Nacos         | NULL
+| Ribbon        | NULL
+| Sentinel      | NULL
+| Gateway       | NULL
+| Sleuth        | NULL
+| Seate         | NULL
+
+| key | value
+|:---:|:---:|
+| lombok        | 1.18.24
+| httpcore      | 4.4.13
+| commons-lang  | 2.6
 
 # 知识储备
 
@@ -627,9 +648,7 @@ linux> 输入:wq, 写入并退出
 
 ```
 
-# 项目环境(后台管理 && 代码生成器)
-
-#### 5.renren-fast && renren-fast-vue
+#### 5.renren-fast && renren-fast-vue(前后端分离的后台管理)
 ```
 git> git clone https://github.com/renrenio/renren-fast-vue.git
 git> git clone https://gitee.com/renrenio/renren-fast
@@ -677,7 +696,7 @@ vscode打开项目 -> 新建终端 -> npm install -> npm run dev
 
 ```
 
-#### 6.renren-generator
+#### 6.renren-generator(代码生成器)
 ```
 # 拉取项目代码
 git> git clone https://gitee.com/renrenio/renren-generator.git
@@ -714,7 +733,9 @@ tablePrefix=pms_
 选择全部表, 按下生成代码, 会把zip文件下载到本地
 
 # 将自动生成的代码进行移植
-将zip的文件解压并复制粘贴到rrvideo-product项目里
+将zip文件中的main和resources解压并复制粘贴到rrvideo-product项目里
+(主要是mapper, controller, dao, service, entity)
+
 此时项目会爆红依赖, 有mybatis-plus这种需要添加依赖的
 和PageUtils.java, Query.java这种需要路径导入的
 前者添加pom.xml依赖
@@ -756,11 +777,146 @@ controller, dao, entity, service
 如果是缺少mybatis这类依赖, 那么就在[rrvideo-common/pom.xml]中进行导入
 如果是缺少renren自己写的包, 那么就到renren-fast项目中去找, 然后将包复制粘贴到rrvideo-common项目中
 
+# 给rrvideo-xxx项目的application.yml里加上数据库连接池, 端口等配置
+
+# 运行任意一个rrvideo-xxx项目, 能跑起来就是成功的
 
 ```
 
+#### 7.spring-cloud-alibaba + nacos
+```text
+# 根据文档配置依赖
+# https://github.com/alibaba/spring-cloud-alibaba/blob/2021.x/README-zh.md
+# https://spring.io/projects/spring-cloud-alibaba#overview
+[rrvideo-common/pom.xml]
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+            <version>2021.1</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+<dependencies>
+    <dependency>
+        <groupId>com.alibaba.cloud</groupId>
+        <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+    </dependency>
+</dependencies>
 
 
+# 启动Nacos Server
+# https://github.com/alibaba/Nacos
+# https://github.com/alibaba/nacos/releases
+解压下载下来的二进制文件
+(这里为了方便下载Windows版本的, 后续可以直接从docker上拉取)
+cmd> startup.cmd -m standalone
+
+
+# 配置rrvideo-xxx项目的nacos配置
+# 比如我这里修改rrvideo-coupon的resources/application.yml
+# 因为nacos服务的默认端口是8848, 这里就用本地IP + 8848端口(localhost:8848, 应该也是一样的)
+spring:
+  application:
+    name: rrvideo-coupon
+    cloud:
+        nacos:
+          discovery:
+            server-addr: 127.0.0.1:8848
+
+# 将服务注册到注册中心
+@SpringBootApplication
+@EnableDiscoveryClient // 开启服务注册与发现功能
+public class RrvideoCouponApplication {}
+
+配置完后, 启动RrvideoCouponApplication
+登录nacos提供的后台管理网站http://localhost:8848/nacos
+账号密码默认为nacos
+
+后台管理的服务管理列表中, 如果有服务的话, 那就是成功了
+接下来就是如法炮制, 将其他服务都进行上面的步骤
+
+```
+
+#### 8.openfeign
+```text
+[rrvideo-common/pom.xml]
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-openfeign</artifactId>
+</dependency>
+
+# 开启feign客户端远程调用功能
+[rrvideo-member/RrvideoXxxApplication.java]
+@EnableFeignClients(basePackages = "com.qing.rrvideo.member.feign")
+public class RrvideoMemberApplication {}
+
+# 测试远程调用(被调用的方法)
+[rrvideo-coupon]
+// CouponController.java
+// 获取某个会员(member)的优惠券(coupon)
+@RequestMapping("/member/list")
+public R memberCoupons() {
+    CouponEntity entity = new CouponEntity();
+    entity.setCouponName("满100减10");
+    return R.ok().put("coupons", Arrays.asList(entity));
+}
+
+# 测试远程调用(配置调用方法)
+[rrvideo-member]
+// src/main/java/com/qing/rrvideo/member/feign/ICouponFeignService
+// 告诉SpringCloud, 这个接口是一个远程客户端
+@FeignClient("rrvideo-coupon")
+public interface CouponFeignService {
+    // requestMapping = 被远程调用的类+方法上面的requestMapping组合起来
+    // 方法名字规范最好和被远程调用的类的方法名一样
+    @RequestMapping("/coupon/coupon/member/list")
+    public R memberCoupons();
+}
+
+// src/main/java/com/qing/rrvideo/member/controller/MemberController
+@RequestMapping("member/member")
+public class MemberController {
+    @Autowired
+    CouponFeignService couponFeignService;
+    
+    @RequestMapping("/coupons")
+    public R test() {
+        MemberEntity entity = new MemberEntity();
+        entity.setNickname("小晴");
+        R r = couponFeignService.memberCoupons();
+    
+        return R.ok().put("member", entity).put("coupons", r.get("coupons"));
+    }
+}
+
+
+# 测试远程调用(测试调用方法)
+
+localhost:8000/member/member/coupons
+↓
+MemberController.test()
+-> 逻辑代码 ***************
+-> 远程调用 CouponFeignService.memberCoupons()
+->        localhost:7000/coupon/coupon/member/list -> CouponController.memberCoupons()
+-> return R.ok()
+↓
+result
+
+# 可能会出现报错的情况
+由于SpringCloud Feign在Hoxton.M2 RELEASED版本之后不再使用Ribbon
+而是使用spring-cloud-starter-loadbalancer(不导入就会报错)
+在rrvideo-member的pom.xml里加进去就好了
+
+
+
+
+
+
+```
 
 
 

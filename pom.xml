@@ -11,6 +11,7 @@
 
     <!-- 聚合服务 -->
     <modules>
+        <module>rrvideo-common</module>
         <module>rrvideo-product</module>
         <module>rrvideo-ware</module>
         <module>rrvideo-order</module>
@@ -18,7 +19,6 @@
         <module>rrvideo-coupon</module>
         <module>renren-fast</module>
         <module>renren-generator</module>
-        <module>rrvideo-common</module>
     </modules>
 
 </project>

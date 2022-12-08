@@ -4,6 +4,12 @@ spring:
     password: root
     url: jdbc:mysql://192.168.126.128:3306/rrvideo_sms
     driver-class-name: com.mysql.cj.jdbc.Driver
+  application:
+    name: rrvideo-coupon
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
 
 mybatis-plus:
   # 搜索当前项目目录 + 依赖的Jar包的目录, 底下的resources/mapper下任意文件夹下的所有.xml文件
