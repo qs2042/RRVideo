@@ -44,7 +44,7 @@
 | httpcore      | 4.4.13
 | commons-lang  | 2.6
 
-# 知识储备
+# 基本内容
 
 #### 0.电商模式
 ```text
@@ -457,6 +457,7 @@ ssh:    git@github.com:qs2042/RRVideo.git
 
 # 项目环境(Docker)
 
+
 #### 4.Docker
 ```
 文档地址    https://docs.docker.com/install/linux/docker-ce/centos/
@@ -648,6 +649,8 @@ linux> 输入:wq, 写入并退出
 
 ```
 
+# 项目环境(后台管理 + 代码生成器)
+
 #### 5.renren-fast && renren-fast-vue(前后端分离的后台管理)
 ```
 git> git clone https://github.com/renrenio/renren-fast-vue.git
@@ -783,7 +786,9 @@ controller, dao, entity, service
 
 ```
 
-#### 7.spring-cloud-alibaba + nacos
+# 项目环境(注册中心 + 配置中心)
+
+#### 7.spring-cloud-alibaba + nacos + nacos(注册中心)
 ```text
 # 根据文档配置依赖
 # https://github.com/alibaba/spring-cloud-alibaba/blob/2021.x/README-zh.md
@@ -822,10 +827,10 @@ cmd> startup.cmd -m standalone
 spring:
   application:
     name: rrvideo-coupon
-    cloud:
-        nacos:
-          discovery:
-            server-addr: 127.0.0.1:8848
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
 
 # 将服务注册到注册中心
 @SpringBootApplication
@@ -841,35 +846,37 @@ public class RrvideoCouponApplication {}
 
 ```
 
-#### 8.openfeign
-```text
-[rrvideo-common/pom.xml]
+#### 8.openfeign(远程调用)
+```java
+// 配置openfeign依赖(可以给每个rrvideo-xxx项目增加, 或者直接给他们的父依赖rrvideo-common添加, 其他项目就不用添加了)
+/*
 <dependency>
     <groupId>org.springframework.cloud</groupId>
     <artifactId>spring-cloud-starter-openfeign</artifactId>
 </dependency>
+ */
 
-# 开启feign客户端远程调用功能
-[rrvideo-member/RrvideoXxxApplication.java]
+// 开启feign客户端远程调用功能
+// [rrvideo-member/RrvideoCouponApplication.java]
 @EnableFeignClients(basePackages = "com.qing.rrvideo.member.feign")
 public class RrvideoMemberApplication {}
 
-# 测试远程调用(被调用的方法)
-[rrvideo-coupon]
-// CouponController.java
-// 获取某个会员(member)的优惠券(coupon)
-@RequestMapping("/member/list")
-public R memberCoupons() {
-    CouponEntity entity = new CouponEntity();
-    entity.setCouponName("满100减10");
-    return R.ok().put("coupons", Arrays.asList(entity));
+// 测试远程调用(被调用的服务)
+// [rrvideo-coupon]
+public class CouponController{
+    // 这里模拟获取某个会员(member)的优惠券(coupon)
+    @RequestMapping("/member/list")
+    public R memberCoupons() {
+        CouponEntity entity = new CouponEntity();
+        entity.setCouponName("满100减10");
+        return R.ok().put("coupons", Arrays.asList(entity));
+    }
 }
 
-# 测试远程调用(配置调用方法)
-[rrvideo-member]
+// 测试远程调用(配置调用方法)
+// [rrvideo-member]
 // src/main/java/com/qing/rrvideo/member/feign/ICouponFeignService
-// 告诉SpringCloud, 这个接口是一个远程客户端
-@FeignClient("rrvideo-coupon")
+@FeignClient("rrvideo-coupon") // 告诉SpringCloud, 这个接口是一个远程客户端
 public interface CouponFeignService {
     // requestMapping = 被远程调用的类+方法上面的requestMapping组合起来
     // 方法名字规范最好和被远程调用的类的方法名一样
@@ -894,26 +901,155 @@ public class MemberController {
 }
 
 
-# 测试远程调用(测试调用方法)
-
+// 测试远程调用(测试调用方法)
+/*
 localhost:8000/member/member/coupons
 ↓
 MemberController.test()
 -> 逻辑代码 ***************
--> 远程调用 CouponFeignService.memberCoupons()
-->        localhost:7000/coupon/coupon/member/list -> CouponController.memberCoupons()
+-> 远程调用 CouponFeignService.memberCoupons() -> localhost:7000/coupon/coupon/member/list -> CouponController.memberCoupons()
+-> 逻辑代码 ***************
 -> return R.ok()
 ↓
 result
+*/
 
-# 可能会出现报错的情况
+// 可能会出现报错的情况
+/*
 由于SpringCloud Feign在Hoxton.M2 RELEASED版本之后不再使用Ribbon
 而是使用spring-cloud-starter-loadbalancer(不导入就会报错)
 在rrvideo-member的pom.xml里加进去就好了
+*/
+
+```
+
+#### 9.nacos(配置中心)
+```text
+# 配置依赖
+// 因为所有微服务都有可能会用到, 所以依赖统一放到rrvideo-common的pom.xml文件中
+<dependency>
+    <groupId>com.alibaba.cloud</groupId>
+    <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+</dependency>
+
+# 配置Nacos的元数据
+// rrvideo-xxx新增bootstrap.properties配置文件(springboot的规范文件, 启动优先于application), 填入以下数据
+spring.application.name=[application.yml里设置过的微服务名称]
+spring.cloud.nacos.config.server-addr=localhost:8848
+
+# 测试配置是否成功
+[rrvideo-coupon: application.properties]
+test.user.name=halfRain
+test.user.age=18
+
+[rrvideo-coupon]
+@RefreshScope
+public class CouponController {
+    @Value("${test.user.name}")
+    private String name;
+    @Value("${test.user.age}")
+    private Integer age;
+    @RequestMapping("/test")
+    public R test() {
+        return R.ok().put("name", name).put("age", age);
+    }
+}
+
+[浏览器] localhost:7000/coupon/coupon/test
+// 就可以通过请求看到读取了application里的值了
+
+[浏览器] localhost:8848/nacos
+配置管理 -> 配置列表 -> 创建列表
+↓
+-> Data ID      文件名称(rrvideo-coupon.properties)
+-> Group        文件组(DEFAULT_GROUP)
+-> 描述          ...
+-> 配置格式       ...(properties)
+-> 配置内容       ...(test.user.name=r \n test.user.age=500)
+
+// 重启rrvideo-coupon + nacos
+// 然后再次访问localhost:7000/coupon/coupon/test
 
 
 
 
+# 命名空间
+[bootstrap.properties]
+spring.cloud.nacos.config.namespace=[命名空间的UUID]
+
+# 为主配置选择组(主配置: 配置文件的名称和微服务名称一致就是主配置, 如果检测到了就会自动导入)
+spring.cloud.nacos.config.group=[group_name]
+
+# 导入多个副配置
+spring.cloud.nacos.config.extension-configs[0].data-id=[配置名称]
+spring.cloud.nacos.config.extension-configs[0].group=[组名称]
+spring.cloud.nacos.config.extension-configs[0].refresh=true
+
+
+
+# nacos配置中心的注意事项
+======================================================
+name                    introduce
+======================================================
+命名空间                用于配置隔离(基于环境 and 基于微服务)
+                      1.比如说dev=开发/test=测试/prop=生产
+                      默认为public(保留空间), 如果想使用其他的命名空间
+                      2.比如说微服务A=Member/微服务B=Coupon/微服务C=Ware
+                      使用方法: 在bootstrap.properties里写入: spring.cloud.nacos.config.namespace=[命名空间的UUID]
+                      
+配置集                 所有配置的集合
+配置集ID               类似文件名
+配置分组               使用方法: 在bootstrap.properties里写入: spring.cloud.nacos.config.group=[group_name]
+
+方式1.命名空间区分环境, 分组区分微服务(官方推荐), 例:
+     命名空间: public, dev, test, prop
+     分组: 微服务A, 微服务B, 微服务C
+     整合到一起最后就是: 
+     public: {"微服务A": [A, B, C], "微服务B": [A, B, C], "微服务C": [A, B, C]}
+     dev: {"微服务A": [A, B, C], "微服务B": [A, B, C], "微服务C": [A, B, C]}
+     test: {"微服务A": [A, B, C], "微服务B": [A, B, C], "微服务C": [A, B, C]}
+     prop: {"微服务A": [A, B, C], "微服务B": [A, B, C], "微服务C": [A, B, C]}
+     
+方式2.命名空间区分微服务, 分组区分环境
+     命名空间: 微服务A, 微服务B, 微服务C
+     分组: public, dev, test, prop
+     整合到一起最后就是: 
+     微服务A: {"public": [A, B, C], "dev": [A, B, C], "test": [A, B, C], "prop": [A, B, C]}
+     微服务B: {"public": [A, B, C], "dev": [A, B, C], "test": [A, B, C], "prop": [A, B, C]}
+     微服务C: {"public": [A, B, C], "dev": [A, B, C], "test": [A, B, C], "prop": [A, B, C]}
+
+
+
+```
+
+# 项目环境(API网关)
+
+#### 10.Gateway
+```java
+/*
+# 创建项目
+new -> Module -> Spring Initializr
+-> Group: com.qing.rrvideo
+-> artifact: rrvideo-gateway
+-> type: maven
+-> language: java
+-> packaging: jar
+-> java version: 8
+-> package: com.qing.rrvideo.gateway
+↓
+SpringBoot 2.7.6 + Gateway
+
+
+# 配置依赖
+[rrvideo-gateway/pom.xml]
+<dependency>
+    <groupId>com.qing.rrvideo</groupId>
+    <artifactId>rrvideo-common</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+</dependency>
+
+
+ */
 
 
 ```
@@ -936,3 +1072,8 @@ result
 
 
 
+# 项目环境(API网关
+#### 10.
+```text
+
+```

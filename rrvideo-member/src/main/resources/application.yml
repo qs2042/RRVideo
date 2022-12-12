@@ -6,16 +6,12 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   application:
     name: rrvideo-member
-    cloud:
-      nacos:
-        discovery:
-          server-addr: 127.0.0.1:8848
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
 
 mybatis-plus:
-  # 搜索当前项目目录 + 依赖的Jar包的目录, 底下的resources/mapper下任意文件夹下的所有.xml文件
-  # mapper-locations: classpath*:/mapper/**/*.xml
-
-  # 搜索当前项目目录, 底下的resources/mapper下任意文件夹下的所有.xml文件
   mapper-locations: classpath:/mapper/**/*.xml
   global-config:
     db-config:
@@ -23,3 +19,5 @@ mybatis-plus:
 
 server:
   port: 8000
+
+# 配置详情请看: rrvideo-ware中的注释
