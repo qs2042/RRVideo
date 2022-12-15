@@ -1039,6 +1039,11 @@ new -> Module -> Spring Initializr
 ↓
 SpringBoot 2.7.6 + Gateway
 
+# 网关加入到项目中
+# 在pom.xml(root)里加入rrvideo-gateway
+<modules>
+    <module>rrvideo-gateway</module>
+</modules>
 
 # 配置依赖
 [rrvideo-gateway/pom.xml]
@@ -1048,7 +1053,47 @@ SpringBoot 2.7.6 + Gateway
     <version>0.0.1-SNAPSHOT</version>
 </dependency>
 
+# 配置nacos配置中心
+[rrvideo-gateway/bootstrap.properties]
+spring.application.name=rrvideo-gateway
+spring.cloud.nacos.config.server-addr=localhost:8848
+spring.cloud.nacos.config.namespace=69d2c919-b655-4278-a63e-c425d322e044
 
+# 配置微服务名称, nacos注册中心, gateway网关规则, 端口号
+[rrvideo-gateway/application.yml]
+spring:
+  application:
+    name: rrvideo-coupon
+  cloud:
+    # nacos
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    # gateway
+    gateway:
+      # 规则
+      routes:
+        # 规则1: 如果params有url这个Key, 并且Value=baidu, 那么就跳转到baidu.com
+        - id: test_baidu_route
+          uri: https://www.baidu.com
+          predicates:
+            - Query=url,baidu
+        # 规则2: 如果params有url这个Key, 并且Value=qq, 那么就跳转到qq.com
+        - id: test_qq_route
+          uri: https://www.qq.com
+          predicates:
+            - Query=url,qq
+
+server:
+  port: 88
+
+
+# 测试是否配置成功
+http://localhost:88/?url=qq -> 跳转到https://www.qq.com
+http://localhost:88/?url=baidu -> 跳转到https://www.baidu.com
+
+http://localhost:88/hello?url=qq -> 跳转到https://www.qq.com/hello
+http://localhost:88/hello?url=baidu -> 跳转到https://www.baidu.com/hello
  */
 
 

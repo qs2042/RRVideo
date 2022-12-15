@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: rrvideo-coupon
+  cloud:
+    # nacos
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    # gateway
+    gateway:
+      # 规则
+      routes:
+        # 规则1: 如果params有url这个Key, 并且Value=baidu, 那么就跳转到baidu.com
+        - id: test_baidu_route
+          uri: https://www.baidu.com
+          predicates:
+            - Query=url,baidu
+        # 规则2: 如果params有url这个Key, 并且Value=qq, 那么就跳转到qq.com
+        - id: test_qq_route
+          uri: https://www.qq.com
+          predicates:
+            - Query=url,qq
+
+server:
+  port: 88
